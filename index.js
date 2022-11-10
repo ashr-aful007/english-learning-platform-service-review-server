@@ -11,6 +11,7 @@ app.use(express.json())
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { query } = require('express');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster1.bsfuvd2.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -47,7 +48,14 @@ async function run (){
             res.send(result)
         })
         //get reviwes 
-        
+        app.get('/reviews/:id', async(req, res) =>{
+            const id = req.params.id
+            const query = {serviceId: id}
+            const cursor =  reviewsCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+
+        })
     }
     finally{
 
