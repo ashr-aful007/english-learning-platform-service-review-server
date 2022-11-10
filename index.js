@@ -52,7 +52,7 @@ async function run (){
             const id = req.params.id
             const query = {serviceId: id}
             const cursor =  reviewsCollection.find(query)
-            const result = await cursor.toArray()
+            const result = await cursor.limit(7).toArray()
             res.send(result)
 
         })
@@ -64,6 +64,19 @@ async function run (){
             console.log(result)
             res.send(result)
         })
+        //update user patch
+        app.patch('/reviews/:id', async(req, res) =>{
+                const id = req.params.id;
+                const status = req.body.status
+                const query = {_id: ObjectId(id)}
+                const updateDoc = {
+                    $set:{
+                        status: status
+                    }
+                }
+                const result = await reviewsCollection.updateOne(query, updateDoc)
+                res.send(result)
+        })
 
         // query serch for email 
         app.get('/reviews', async(req, res) =>{
@@ -74,8 +87,16 @@ async function run (){
                 }
             }
             const cursor = reviewsCollection.find(query)
-            const result = await cursor.toArray()
+            const result = await cursor.limit(7).toArray()
             res.send(result)
+        })
+
+        //post for add services
+        app.post('/addservices', async(req, res) =>{
+              const addService = req.params.body;
+              const result =  await serviceCollection.insertOne(addService)
+              res.send(result)
+              console.log(result)
         })
     }
     finally{
@@ -93,3 +114,5 @@ app.get('/', (req, res) =>{
 app.listen(port,()=>{   
      console.log(`server runnig on ${port}`)
 })
+
+
